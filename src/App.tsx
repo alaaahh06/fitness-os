@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Dumbbell, History, User, Play, Activity, Clock, Zap, Target, Square, CheckCircle, AlertTriangle, Plus, X, Timer } from 'lucide-react';
+import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Timer } from 'lucide-react';
 import { supabase } from './lib/supabase';
 
 // --- WORKOUT LIBRARIES ---
@@ -225,7 +225,7 @@ const Workout = ({ userId }: { userId: string }) => {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isTracking) interval = setInterval(() => setElapsedTime(prev => prev + 1), 1000);
     return () => clearInterval(interval);
   }, [isTracking]);

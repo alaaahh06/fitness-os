@@ -230,12 +230,6 @@ const Workout = ({ userId }: { userId: string }) => {
     return () => clearInterval(interval);
   }, [isTracking]);
 
-  const formatTime = (secs: number) => {
-    const m = Math.floor(secs / 60).toString().padStart(2, '0');
-    const s = (secs % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-  };
-
   const workoutPlan = plan.map((ex: any) => {
     let adjustedSets = ex.sets;
     if (energy && energy <= 2) adjustedSets = Math.max(1, ex.sets - 1);
@@ -243,6 +237,25 @@ const Workout = ({ userId }: { userId: string }) => {
   });
 
   const activeExercise = workoutPlan[currentExerciseIndex];
+
+  // Auto-fill suggested weight from Local Storage
+  useEffect(() => {
+    if (activeExercise) {
+      const memory = JSON.parse(localStorage.getItem('fitnessOsWeights') || '{}');
+      if (memory[activeExercise.name]) {
+        setCurrentWeight(memory[activeExercise.name]);
+      } else {
+        setCurrentWeight('');
+      }
+      setCurrentReps('');
+    }
+  }, [currentExerciseIndex, activeExercise]);
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
 
   if (!energy) {
     return (
@@ -259,6 +272,21 @@ const Workout = ({ userId }: { userId: string }) => {
       </div>
     );
   }
+
+  const handleCompleteSet = () => {
+    const w = Number(currentWeight);
+    const r = Number(currentReps);
+    if (w > 0 && r > 0) {
+      // Save weight to memory for next time
+      const memory = JSON.parse(localStorage.getItem('fitnessOsWeights') || '{}');
+      memory[activeExercise.name] = currentWeight;
+      localStorage.setItem('fitnessOsWeights', JSON.stringify(memory));
+
+      setVolume(prev => prev + (w * r));
+      setSetsCompleted(prev => prev + 1);
+      setCurrentReps('');
+    }
+  };
 
   const handleFinish = async () => {
     setIsTracking(false);
@@ -320,11 +348,11 @@ const Workout = ({ userId }: { userId: string }) => {
                 <input type="number" inputMode="numeric" value={currentReps} onChange={(e) => setCurrentReps(e.target.value)} className="w-full bg-background border border-border rounded-xl p-4 text-3xl font-black text-center focus:outline-none focus:border-textMain" />
               </div>
             </div>
-            <button onClick={() => { const w = Number(currentWeight); const r = Number(currentReps); if (w > 0 && r > 0) { setVolume(prev => prev + (w * r)); setSetsCompleted(prev => prev + 1); setCurrentReps(''); } }} className="w-full py-5 bg-textMain text-background font-black text-lg rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+            <button onClick={handleCompleteSet} className="w-full py-5 bg-textMain text-background font-black text-lg rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all">
               <CheckCircle className="w-6 h-6" /> COMPLETE SET
             </button>
             {currentExerciseIndex < workoutPlan.length - 1 && (
-              <button onClick={() => { setCurrentExerciseIndex(prev => prev + 1); setCurrentWeight(''); setCurrentReps(''); }} className="w-full py-4 bg-transparent border border-border text-textMain font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-surface transition-colors mt-2">NEXT EXERCISE →</button>
+              <button onClick={() => setCurrentExerciseIndex(prev => prev + 1)} className="w-full py-4 bg-transparent border border-border text-textMain font-bold rounded-xl flex items-center justify-center gap-2 hover:bg-surface transition-colors mt-2">NEXT EXERCISE →</button>
             )}
           </div>
         </>
@@ -370,6 +398,68 @@ const WorkoutSummary = ({ refreshProfile }: { refreshProfile: () => void }) => {
   );
 };
 
+// --- HISTORY SCREEN ---
+const HistoryScreen = ({ userId }: { userId: string }) => {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    const { data } = await supabase
+      .from('workout_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    setLogs(data || []);
+    setLoading(false);
+  };
+
+  const handleClear = async () => {
+    if (window.confirm("Are you sure you want to permanently delete all your workout history?")) {
+      await supabase.from('workout_logs').delete().eq('user_id', userId);
+      setLogs([]);
+    }
+  };
+
+  if (loading) return <div className="p-6 text-textMuted font-bold mt-8">LOADING HISTORY...</div>;
+
+  return (
+    <div className="p-6 space-y-6 animate-fade-in pb-24 mt-4">
+      <div className="flex justify-between items-end">
+        <h1 className="text-3xl font-black tracking-tight uppercase italic">History</h1>
+        {logs.length > 0 && (
+          <button onClick={handleClear} className="text-red-500 font-bold uppercase text-xs tracking-wider mb-1 hover:text-red-400">Clear All</button>
+        )}
+      </div>
+
+      {logs.length === 0 ? (
+        <div className="bg-surface p-6 rounded-2xl border border-border text-center text-textMuted shadow-sm">
+          No workouts logged yet. Time to get to work!
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {logs.map((log) => (
+            <div key={log.id} className="bg-surface p-4 rounded-xl border border-border shadow-sm">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-bold text-lg uppercase">{log.day_name}</h3>
+                <span className="text-xs text-textMuted font-bold">{new Date(log.created_at).toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <div><span className="text-textMuted uppercase text-[10px] tracking-wider block mb-1">Volume</span> <span className="font-bold">{log.total_volume}kg</span></div>
+                <div><span className="text-textMuted uppercase text-[10px] tracking-wider block mb-1">Sets</span> <span className="font-bold">{log.sets_completed}</span></div>
+                <div><span className="text-textMuted uppercase text-[10px] tracking-wider block mb-1">Time</span> <span className="font-bold">{Math.ceil(log.duration_seconds/60)}m</span></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // --- PROFILE SCREEN ---
 const ProfileScreen = ({ profile, refreshProfile }: { profile: any, refreshProfile: () => void }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -401,7 +491,7 @@ const ProfileScreen = ({ profile, refreshProfile }: { profile: any, refreshProfi
           </>
         ) : (
           <div className="space-y-3 mt-4 animate-fade-in">
-            {['Push / Pull / Legs', 'Upper / Lower', 'Full Body', 'Bro Split'].map((s) => (
+            {['Push / Pull / Legs', 'Upper / Lower', 'Full Body', 'Bro Split', 'Custom'].map((s) => (
               <button key={s} onClick={() => setNewSplit(s)} className={`w-full p-4 rounded-xl border text-left font-bold transition-all ${newSplit === s ? 'bg-textMain text-background border-textMain' : 'bg-background border-border text-textMain'}`}>
                 {s}
               </button>
@@ -487,7 +577,7 @@ export default function App() {
           <Route path="/" element={<Dashboard profile={profile} />} />
           <Route path="/workout" element={<Workout userId={session.user.id} />} />
           <Route path="/summary" element={<WorkoutSummary refreshProfile={() => fetchProfile(session.user.id)} />} />
-          <Route path="/history" element={<div className="p-6 text-2xl font-bold">HISTORY TAB COMING SOON</div>} />
+          <Route path="/history" element={<HistoryScreen userId={session.user.id} />} />
           <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} />} />
         </Routes>
         <BottomNav />

@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0a0a0a;
+  --color-surface: #171717;
+  --color-border: #262626;
+  --color-textMain: #f5f5f5;
+  --color-textMuted: #a3a3a3;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-textMain antialiased selection:bg-textMuted selection:text-background;
+  }
+}

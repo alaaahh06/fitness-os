@@ -550,6 +550,52 @@ export default function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) {
+        setLoading(true);
+        fetchProfile(session.user.id);
+      } else setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        setLoading(true);
+        fetchProfile(session.user.id);
+      } else { 
+        setProfile(null); 
+        setLoading(false); 
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-textMuted font-bold">LOADING OS...</div>;
+
+  if (!session) return <AuthScreen />;
+
+  if (profile?.isNew) {
+    return <Setup userId={session.user.id} onComplete={() => fetchProfile(session.user.id)} />;
+  }
+
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-background text-textMain pb-20">
+        <Routes>
+          <Route path="/" element={<Dashboard profile={profile} />} />
+          <Route path="/workout" element={<Workout userId={session.user.id} />} />
+          <Route path="/summary" element={<WorkoutSummary refreshProfile={() => fetchProfile(session.user.id)} />} />
+          <Route path="/history" element={<HistoryScreen userId={session.user.id} />} />
+          <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} />} />
+        </Routes>
+        <BottomNav />
+      </div>
+    </BrowserRouter>
+  );
+}
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
       if (session) fetchProfile(session.user.id);
       else setLoading(false);
     });

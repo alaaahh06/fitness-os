@@ -240,7 +240,7 @@ const Workout = ({ userId }: { userId: string }) => {
 
   // Auto-fill suggested weight from Local Storage
   useEffect(() => {
-    if (activeExercise) {
+    if (activeExercise?.name) {
       const memory = JSON.parse(localStorage.getItem('fitnessOsWeights') || '{}');
       if (memory[activeExercise.name]) {
         setCurrentWeight(memory[activeExercise.name]);
@@ -249,7 +249,7 @@ const Workout = ({ userId }: { userId: string }) => {
       }
       setCurrentReps('');
     }
-  }, [currentExerciseIndex, activeExercise]);
+  }, [activeExercise?.name]);
 
   const formatTime = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, '0');

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Timer } from 'lucide-react';
 import { supabase } from './lib/supabase';
 
@@ -542,18 +542,21 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    setProfile(data || { isNew: true });
-    setLoading(false);
+    try {
+      const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      setProfile(data || { isNew: true });
+    } catch (error) {
+      setProfile({ isNew: true });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) {
-        setLoading(true);
-        fetchProfile(session.user.id);
-      } else setLoading(false);
+      if (session) fetchProfile(session.user.id);
+      else setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -569,46 +572,12 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-textMuted font-bold">LOADING OS...</div>;
-
-  if (!session) return <AuthScreen />;
-
-  if (profile?.isNew) {
-    return <Setup userId={session.user.id} onComplete={() => fetchProfile(session.user.id)} />;
-  }
-
-  return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-background text-textMain pb-20">
-        <Routes>
-          <Route path="/" element={<Dashboard profile={profile} />} />
-          <Route path="/workout" element={<Workout userId={session.user.id} />} />
-          <Route path="/summary" element={<WorkoutSummary refreshProfile={() => fetchProfile(session.user.id)} />} />
-          <Route path="/history" element={<HistoryScreen userId={session.user.id} />} />
-          <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} />} />
-        </Routes>
-        <BottomNav />
-      </div>
-    </BrowserRouter>
+  if (loading) return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center space-y-4">
+      <Timer className="w-8 h-8 text-textMuted animate-spin" />
+      <div className="text-textMuted font-bold tracking-widest text-sm uppercase">Loading OS...</div>
+    </div>
   );
-}
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) fetchProfile(session.user.id);
-      else setLoading(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) fetchProfile(session.user.id);
-      else { setProfile(null); setLoading(false); }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (loading) return <div className="min-h-screen bg-background flex items-center justify-center text-textMuted font-bold">LOADING OS...</div>;
 
   if (!session) return <AuthScreen />;
 
@@ -617,7 +586,7 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="min-h-screen bg-background text-textMain pb-20">
         <Routes>
           <Route path="/" element={<Dashboard profile={profile} />} />
@@ -625,9 +594,10 @@ export default function App() {
           <Route path="/summary" element={<WorkoutSummary refreshProfile={() => fetchProfile(session.user.id)} />} />
           <Route path="/history" element={<HistoryScreen userId={session.user.id} />} />
           <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <BottomNav />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }

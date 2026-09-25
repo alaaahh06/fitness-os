@@ -65,7 +65,7 @@ const CustomBuilder = ({ onSave, onCancel, initialData }: any) => {
   if (step === 1) {
     return (
       <div className="space-y-6 animate-fade-in w-full pb-24">
-        <h2 className="text-3xl font-black tracking-tight uppercase text-white">Configure Split</h2>
+        <h2 className="text-3xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Configure Split</h2>
         <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-4">
           <div>
             <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Split Name</label>
@@ -87,7 +87,7 @@ const CustomBuilder = ({ onSave, onCancel, initialData }: any) => {
   return (
     <div className="space-y-6 animate-fade-in w-full overflow-y-auto pb-32">
       <div className="space-y-1">
-        <h2 className="text-2xl font-black tracking-tight uppercase text-white">{splitName}</h2>
+        <h2 className="text-2xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">{splitName}</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Building Day {currentDayIndex + 1} of {daysCount}</p>
       </div>
       
@@ -396,8 +396,8 @@ const Workout = ({ userId }: { userId: string }) => {
 
       {!isTracking ? (
         <div className="py-16 flex flex-col items-center space-y-4">
-          <div className="p-8 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-            <Dumbbell className="w-20 h-20 text-white animate-pulse" />
+          <div className="p-5 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <Dumbbell className="w-8 h-8 text-white animate-spin" />
           </div>
           <p className="text-gray-400 font-bold text-lg mt-4">Ready when you are.</p>
           <button onClick={() => setIsTracking(true)} className="w-full py-5 mt-6 bg-white text-black font-black text-xl rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all">START TRACKING</button>
@@ -696,8 +696,8 @@ export default function App() {
 
   if (loading) return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black flex flex-col items-center justify-center space-y-5 text-white">
-      <div className="p-5 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-         <Dumbbell className="w-10 h-10 text-white animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+      <div className="p-4 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+         <Dumbbell className="w-6 h-6 text-white animate-spin" />
       </div>
       <div className="text-white font-bold tracking-widest text-[10px] uppercase drop-shadow-md">Loading OS...</div>
     </div>

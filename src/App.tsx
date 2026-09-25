@@ -1,7 +1,16 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Edit3 } from 'lucide-react';
+import { Home, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Edit3 } from 'lucide-react';
 import { supabase } from './lib/supabase';
+
+// --- CUSTOM ICONS ---
+const SimpleDumbbell = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="5" y="7" width="4" height="10" rx="1" />
+    <rect x="15" y="7" width="4" height="10" rx="1" />
+    <line x1="9" y1="12" x2="15" y2="12" strokeWidth="2" />
+  </svg>
+);
 
 // --- WORKOUT LIBRARIES ---
 const WORKOUT_LIBRARIES: Record<string, any[]> = {
@@ -396,8 +405,8 @@ const Workout = ({ userId }: { userId: string }) => {
 
       {!isTracking ? (
         <div className="py-16 flex flex-col items-center space-y-4">
-          <div className="p-5 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-            <Dumbbell className="w-8 h-8 text-white animate-spin" />
+          <div className="p-6 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+            <SimpleDumbbell className="w-8 h-8 text-white animate-spin" />
           </div>
           <p className="text-gray-400 font-bold text-lg mt-4">Ready when you are.</p>
           <button onClick={() => setIsTracking(true)} className="w-full py-5 mt-6 bg-white text-black font-black text-xl rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all">START TRACKING</button>
@@ -635,7 +644,7 @@ const BottomNav = () => {
   const location = useLocation();
   const navItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
-    { path: '/workout', icon: Dumbbell, label: 'Workout' },
+    { path: '/workout', icon: SimpleDumbbell, label: 'Workout' },
     { path: '/history', icon: History, label: 'History' },
     { path: '/profile', icon: User, label: 'Profile' },
   ];
@@ -697,7 +706,7 @@ export default function App() {
   if (loading) return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black flex flex-col items-center justify-center space-y-5 text-white">
       <div className="p-4 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-         <Dumbbell className="w-6 h-6 text-white animate-spin" />
+         <SimpleDumbbell className="w-6 h-6 text-white animate-spin" />
       </div>
       <div className="text-white font-bold tracking-widest text-[10px] uppercase drop-shadow-md">Loading OS...</div>
     </div>

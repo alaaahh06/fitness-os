@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Timer, Edit3 } from 'lucide-react';
+import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Edit3 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 
 // --- WORKOUT LIBRARIES ---

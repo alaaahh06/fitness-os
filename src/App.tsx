@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Timer, Edit3, Camera, Trash2 } from 'lucide-react';
+import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Timer, Edit3 } from 'lucide-react';
 import { supabase } from './lib/supabase';
 
 // --- WORKOUT LIBRARIES ---
@@ -119,7 +119,7 @@ const CustomBuilder = ({ onSave, onCancel, initialData }: any) => {
 };
 
 // --- AUTHENTICATION SCREEN ---
-const AuthScreen = ({ bgImage }: { bgImage: string | null }) => {
+const AuthScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
@@ -141,13 +141,7 @@ const AuthScreen = ({ bgImage }: { bgImage: string | null }) => {
   };
 
   return (
-    <div 
-      className="min-h-screen flex flex-col justify-center p-6 space-y-8 animate-fade-in text-white selection:bg-violet-500/30"
-      style={{ 
-        backgroundImage: bgImage ? `linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url(${bgImage})` : 'radial-gradient(ellipse at top, #0f172a, #050505, #000000)',
-        backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
-      }}
-    >
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black flex flex-col justify-center p-6 space-y-8 animate-fade-in text-white selection:bg-violet-500/30">
       <div className="text-center space-y-2">
         <h1 className="text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">FITNESS OS</h1>
         <p className="text-violet-400 uppercase tracking-widest text-xs font-bold drop-shadow-[0_0_8px_rgba(124,58,237,0.5)]">{isLogin ? 'Welcome Back' : 'Create Account'}</p>
@@ -176,15 +170,10 @@ const AuthScreen = ({ bgImage }: { bgImage: string | null }) => {
 };
 
 // --- SETUP / ONBOARDING COMPONENT ---
-const Setup = ({ userId, onComplete, bgImage }: { userId: string, onComplete: () => void, bgImage: string | null }) => {
+const Setup = ({ userId, onComplete }: { userId: string, onComplete: () => void }) => {
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [split, setSplit] = useState('');
-
-  const backgroundStyle = { 
-    backgroundImage: bgImage ? `linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url(${bgImage})` : 'radial-gradient(ellipse at top, #0f172a, #050505, #000000)',
-    backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
-  };
 
   const saveProfile = async (selectedSplit: string, planData: any = null) => {
     await supabase.from('profiles').upsert({
@@ -199,7 +188,7 @@ const Setup = ({ userId, onComplete, bgImage }: { userId: string, onComplete: ()
 
   if (step === 1) {
     return (
-      <div className="min-h-screen text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in" style={backgroundStyle}>
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
         <h2 className="text-4xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">What should we call you?</h2>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Arju" className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 text-2xl font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 shadow-2xl transition-all" />
         <button onClick={() => name.trim() && setStep(2)} className={`w-full py-5 font-black text-lg rounded-xl transition-all shadow-lg ${name.trim() ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:scale-[1.02]' : 'bg-white/5 text-gray-500 border border-white/10 pointer-events-none'}`}>CONTINUE</button>
@@ -209,14 +198,14 @@ const Setup = ({ userId, onComplete, bgImage }: { userId: string, onComplete: ()
 
   if (step === 3) {
     return (
-      <div className="min-h-screen text-white flex flex-col p-6 pt-12" style={backgroundStyle}>
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col p-6 pt-12">
         <CustomBuilder onSave={(customName: string, planData: any) => saveProfile(customName, { [customName]: planData })} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in" style={backgroundStyle}>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
       <div className="space-y-2">
         <h2 className="text-4xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Choose your split</h2>
       </div>
@@ -552,7 +541,7 @@ const HistoryScreen = ({ userId }: { userId: string }) => {
 };
 
 // --- PROFILE SCREEN ---
-const ProfileScreen = ({ profile, refreshProfile, bgImage, setBgImage }: any) => {
+const ProfileScreen = ({ profile, refreshProfile }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isBuilding, setIsBuilding] = useState(false);
   const [editData, setEditData] = useState<any>(null);
@@ -586,28 +575,6 @@ const ProfileScreen = ({ profile, refreshProfile, bgImage, setBgImage }: any) =>
     setIsBuilding(false);
     setIsEditing(false);
     refreshProfile();
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        try {
-          localStorage.setItem('fitnessOsBg', base64String);
-          setBgImage(base64String);
-        } catch (error) {
-          alert('This image is too large. Please select a smaller photo (under 3MB).');
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    localStorage.removeItem('fitnessOsBg');
-    setBgImage(null);
   };
 
   if (isBuilding) {
@@ -656,23 +623,6 @@ const ProfileScreen = ({ profile, refreshProfile, bgImage, setBgImage }: any) =>
         )}
       </div>
 
-      <div className="bg-white/5 backdrop-blur-2xl p-6 rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.4)] space-y-4">
-        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Personalization</p>
-        
-        <div className="flex flex-col gap-3">
-          <label className="w-full py-4 border border-white/20 bg-black/20 backdrop-blur-md text-white font-bold rounded-2xl hover:bg-white/10 flex items-center justify-center gap-2 transition-all shadow-inner cursor-pointer">
-            <Camera className="w-5 h-5" /> {bgImage ? 'CHANGE BACKGROUND' : 'UPLOAD BACKGROUND'}
-            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-          </label>
-          
-          {bgImage && (
-            <button onClick={handleRemoveImage} className="w-full py-4 border border-red-500/30 text-red-400 font-bold rounded-2xl hover:bg-red-500/10 transition-all flex items-center justify-center gap-2">
-               <Trash2 className="w-5 h-5" /> REMOVE BACKGROUND
-            </button>
-          )}
-        </div>
-      </div>
-
       <button onClick={() => supabase.auth.signOut()} className="w-full py-4 bg-red-950/30 border border-red-500/30 text-red-400 font-bold rounded-2xl mt-8 hover:bg-red-900/40 hover:text-red-300 transition-colors backdrop-blur-md">
         SIGN OUT
       </button>
@@ -712,7 +662,6 @@ export default function App() {
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [bgImage, setBgImage] = useState<string | null>(localStorage.getItem('fitnessOsBg') || null);
 
   const fetchProfile = async (userId: string) => {
     try {
@@ -745,13 +694,8 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const backgroundStyle = { 
-    backgroundImage: bgImage ? `linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url(${bgImage})` : 'radial-gradient(ellipse at top, #0f172a, #050505, #000000)',
-    backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'
-  };
-
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center space-y-5 text-white" style={backgroundStyle}>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black flex flex-col items-center justify-center space-y-5 text-white">
       <div className="p-4 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
          <Timer className="w-10 h-10 text-cyan-400 animate-spin drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
       </div>
@@ -759,21 +703,21 @@ export default function App() {
     </div>
   );
 
-  if (!session) return <AuthScreen bgImage={bgImage} />;
+  if (!session) return <AuthScreen />;
 
   if (profile?.isNew) {
-    return <Setup userId={session.user.id} onComplete={() => fetchProfile(session.user.id)} bgImage={bgImage} />;
+    return <Setup userId={session.user.id} onComplete={() => fetchProfile(session.user.id)} />;
   }
 
   return (
     <HashRouter>
-      <div className="min-h-screen text-white pb-20 selection:bg-violet-500/30" style={backgroundStyle}>
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white pb-20 selection:bg-violet-500/30">
         <Routes>
           <Route path="/" element={<Dashboard profile={profile} />} />
           <Route path="/workout" element={<Workout userId={session.user.id} />} />
           <Route path="/summary" element={<WorkoutSummary refreshProfile={() => fetchProfile(session.user.id)} />} />
           <Route path="/history" element={<HistoryScreen userId={session.user.id} />} />
-          <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} bgImage={bgImage} setBgImage={setBgImage} />} />
+          <Route path="/profile" element={<ProfileScreen profile={profile} refreshProfile={() => fetchProfile(session.user.id)} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <BottomNav />

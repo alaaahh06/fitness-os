@@ -27,20 +27,103 @@ const WORKOUT_LIBRARIES: Record<string, any[]> = {
   ]
 };
 
+// --- CUSTOM BUILDER COMPONENT ---
+const CustomBuilder = ({ onSave, onCancel }: any) => {
+  const [step, setStep] = useState(1);
+  const [splitName, setSplitName] = useState('');
+  const [daysCount, setDaysCount] = useState(3);
+  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const [builtDays, setBuiltDays] = useState<any[]>([]);
+  const [dayName, setDayName] = useState('Day 1');
+  const [exercises, setExercises] = useState([{ name: '', sets: 3, reps: '8-12' }]);
+
+  const nextDay = () => {
+    const newBuiltDays = [...builtDays, { dayName, exercises: exercises.filter(e => e.name.trim() !== '') }];
+    if (currentDayIndex + 1 < daysCount) {
+      setBuiltDays(newBuiltDays);
+      setCurrentDayIndex(prev => prev + 1);
+      setDayName(`Day ${currentDayIndex + 2}`);
+      setExercises([{ name: '', sets: 3, reps: '8-12' }]);
+    } else {
+      onSave(splitName, newBuiltDays);
+    }
+  };
+
+  if (step === 1) {
+    return (
+      <div className="space-y-6 animate-fade-in w-full pb-24">
+        <h2 className="text-3xl font-black tracking-tight uppercase">Configure Split</h2>
+        <div className="bg-surface p-6 rounded-2xl border border-border shadow-sm space-y-4">
+          <div>
+            <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Split Name</label>
+            <input type="text" value={splitName} onChange={e => setSplitName(e.target.value)} placeholder="e.g. My Arnold Split" className="w-full bg-background border border-border rounded-xl p-4 font-bold focus:border-textMain focus:outline-none" />
+          </div>
+          <div>
+            <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Number of Days</label>
+            <input type="number" min="1" max="14" value={daysCount} onChange={e => setDaysCount(Number(e.target.value))} className="w-full bg-background border border-border rounded-xl p-4 font-bold focus:border-textMain focus:outline-none" />
+          </div>
+        </div>
+        <div className="flex gap-3 mt-4">
+          {onCancel && <button onClick={onCancel} className="flex-1 py-4 border border-border text-textMain font-bold rounded-xl hover:bg-surface">CANCEL</button>}
+          <button onClick={() => splitName.trim() && daysCount > 0 && setStep(2)} className={`flex-1 py-4 font-black rounded-xl transition-all ${splitName.trim() ? 'bg-textMain text-background hover:opacity-90' : 'bg-surface text-textMuted pointer-events-none'}`}>START BUILDING</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 animate-fade-in w-full overflow-y-auto pb-32">
+      <div className="space-y-1">
+        <h2 className="text-2xl font-black tracking-tight uppercase">{splitName}</h2>
+        <p className="text-textMuted text-xs font-bold uppercase tracking-widest">Building Day {currentDayIndex + 1} of {daysCount}</p>
+      </div>
+      
+      <div>
+        <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Day Title</label>
+        <input type="text" value={dayName} onChange={e => setDayName(e.target.value)} placeholder="e.g. Push Day" className="w-full bg-surface border border-border rounded-xl p-4 font-bold focus:border-textMain focus:outline-none" />
+      </div>
+
+      <div className="space-y-4">
+        {exercises.map((ex, idx) => (
+          <div key={idx} className="bg-surface p-4 rounded-xl border border-border space-y-3 relative shadow-sm">
+            {exercises.length > 1 && <button onClick={() => setExercises(exercises.filter((_, i) => i !== idx))} className="absolute top-4 right-4 text-textMuted hover:text-red-500"><X className="w-5 h-5" /></button>}
+            <input type="text" value={ex.name} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].name = e.target.value; setExercises(newPlan); }} placeholder="Exercise" className="w-full bg-background border border-border rounded-lg p-3 font-bold focus:border-textMain focus:outline-none" />
+            <div className="flex gap-3">
+              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-textMuted tracking-wider mb-1 block">Sets</label><input type="number" value={ex.sets} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].sets = Number(e.target.value); setExercises(newPlan); }} className="w-full bg-background border border-border rounded-lg p-3 focus:border-textMain focus:outline-none" /></div>
+              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-textMuted tracking-wider mb-1 block">Reps</label><input type="text" value={ex.reps} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].reps = e.target.value; setExercises(newPlan); }} className="w-full bg-background border border-border rounded-lg p-3 focus:border-textMain focus:outline-none" /></div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => setExercises([...exercises, { name: '', sets: 3, reps: '8-12' }])} className="w-full py-4 border border-dashed border-textMuted text-textMuted font-bold rounded-xl hover:text-textMain hover:border-textMain flex items-center justify-center gap-2"><Plus className="w-5 h-5" /> ADD EXERCISE</button>
+      
+      <div className="flex gap-3 mt-8">
+        {onCancel && <button onClick={onCancel} className="flex-1 py-4 border border-border text-textMain font-bold rounded-xl">CANCEL</button>}
+        <button onClick={nextDay} className="flex-1 py-4 font-black rounded-xl bg-textMain text-background hover:opacity-90">{currentDayIndex + 1 === daysCount ? 'SAVE SPLIT' : 'NEXT DAY →'}</button>
+      </div>
+    </div>
+  );
+};
+
 // --- AUTHENTICATION SCREEN ---
 const AuthScreen = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState('');
 
   const handleAuth = async () => {
     setError('');
+    // Create a background email required by Supabase using the username
+    const cleanUsername = username.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    if (!cleanUsername) return setError("Please enter a valid username.");
+    const backgroundEmail = `${cleanUsername}@fitnessos.local`;
+
     if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setError(error.message);
+      const { error } = await supabase.auth.signInWithPassword({ email: backgroundEmail, password });
+      if (error) setError(error.message.includes("Invalid login") ? "Username or password incorrect." : error.message);
     } else {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({ email: backgroundEmail, password });
       if (error) setError(error.message);
     }
   };
@@ -55,8 +138,8 @@ const AuthScreen = () => {
       <div className="space-y-4 bg-surface p-6 rounded-2xl border border-border shadow-lg">
         {error && <div className="p-3 bg-[#1a1515] border border-red-900/50 text-red-200 text-sm rounded-lg">{error}</div>}
         <div>
-          <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Email</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-background border border-border rounded-xl p-4 font-bold focus:border-textMain focus:outline-none focus:ring-1 focus:ring-textMain" />
+          <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Username</label>
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="e.g. IronLifter99" className="w-full bg-background border border-border rounded-xl p-4 font-bold focus:border-textMain focus:outline-none focus:ring-1 focus:ring-textMain" />
         </div>
         <div>
           <label className="text-xs uppercase font-bold text-textMuted tracking-wider mb-2 block">Password</label>
@@ -78,7 +161,6 @@ const Setup = ({ userId, onComplete }: { userId: string, onComplete: () => void 
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [split, setSplit] = useState('');
-  const [customPlan, setCustomPlan] = useState([{ name: '', sets: 3, reps: '8-12' }]);
 
   const saveProfile = async (selectedSplit: string, planData: any = null) => {
     await supabase.from('profiles').upsert({
@@ -103,24 +185,10 @@ const Setup = ({ userId, onComplete }: { userId: string, onComplete: () => void 
 
   if (step === 3) {
     return (
-      <div className="min-h-screen bg-background flex flex-col p-6 space-y-6 animate-fade-in pb-24 overflow-y-auto">
-        <div className="space-y-2 mt-8">
-          <h2 className="text-3xl font-black tracking-tight uppercase">Build Custom Routine</h2>
-        </div>
-        <div className="space-y-4">
-          {customPlan.map((ex, idx) => (
-            <div key={idx} className="bg-surface p-4 rounded-xl border border-border space-y-3 relative shadow-sm">
-              {customPlan.length > 1 && <button onClick={() => setCustomPlan(customPlan.filter((_, i) => i !== idx))} className="absolute top-4 right-4 text-textMuted hover:text-red-500"><X className="w-5 h-5" /></button>}
-              <input type="text" value={ex.name} onChange={(e) => { const newPlan = [...customPlan]; newPlan[idx].name = e.target.value; setCustomPlan(newPlan); }} placeholder="Exercise" className="w-full bg-background border border-border rounded-lg p-3 font-bold focus:border-textMain focus:outline-none" />
-              <div className="flex gap-3">
-                <div className="flex-1"><label className="text-[10px] uppercase font-bold text-textMuted tracking-wider mb-1 block">Sets</label><input type="number" value={ex.sets} onChange={(e) => { const newPlan = [...customPlan]; newPlan[idx].sets = Number(e.target.value); setCustomPlan(newPlan); }} className="w-full bg-background border border-border rounded-lg p-3 focus:border-textMain focus:outline-none" /></div>
-                <div className="flex-1"><label className="text-[10px] uppercase font-bold text-textMuted tracking-wider mb-1 block">Reps</label><input type="text" value={ex.reps} onChange={(e) => { const newPlan = [...customPlan]; newPlan[idx].reps = e.target.value; setCustomPlan(newPlan); }} className="w-full bg-background border border-border rounded-lg p-3 focus:border-textMain focus:outline-none" /></div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button onClick={() => setCustomPlan([...customPlan, { name: '', sets: 3, reps: '8-12' }])} className="w-full py-4 border border-dashed border-textMuted text-textMuted font-bold rounded-xl hover:text-textMain hover:border-textMain flex items-center justify-center gap-2"><Plus className="w-5 h-5" /> ADD EXERCISE</button>
-        <button onClick={() => { const finalPlan = customPlan.filter(ex => ex.name.trim() !== ''); if (finalPlan.length > 0) saveProfile('Custom', [{ dayName: 'Custom Workout', exercises: finalPlan }]); }} className="w-full py-5 font-black text-lg rounded-xl bg-textMain text-background hover:opacity-90 shadow-lg mt-4">SAVE WORKOUT</button>
+      <div className="min-h-screen bg-background flex flex-col p-6 pt-12">
+        <CustomBuilder 
+          onSave={(customName: string, planData: any) => saveProfile(customName, { [customName]: planData })} 
+        />
       </div>
     );
   }
@@ -147,14 +215,18 @@ const Dashboard = ({ profile }: { profile: any }) => {
   const navigate = useNavigate();
 
   let userSplit = [];
-  if (profile.split_preference === 'Custom') {
-    userSplit = profile.custom_plan || [];
+  if (WORKOUT_LIBRARIES[profile.split_preference]) {
+    userSplit = WORKOUT_LIBRARIES[profile.split_preference];
   } else {
-    userSplit = WORKOUT_LIBRARIES[profile.split_preference] || [];
+    // Parse custom plans robustly
+    let customRoutines: any = {};
+    if (Array.isArray(profile.custom_plan)) customRoutines = { 'Custom Workout': profile.custom_plan };
+    else if (profile.custom_plan) customRoutines = profile.custom_plan;
+    userSplit = customRoutines[profile.split_preference] || [];
   }
 
   const todaysRoutine = userSplit[profile.current_day_index] || { dayName: 'Workout', exercises: [] };
-  const todaysPlan = todaysRoutine.exercises;
+  const todaysPlan = todaysRoutine.exercises || [];
 
   return (
     <div className="p-6 space-y-8 animate-fade-in pb-24">
@@ -179,7 +251,7 @@ const Dashboard = ({ profile }: { profile: any }) => {
             <div className="bg-background rounded-xl p-4 border border-border flex flex-col justify-between">
               <Zap className="w-5 h-5 text-textMuted mb-2" />
               <div>
-                <p className="text-xl font-bold">{profile.split_preference}</p>
+                <p className="text-xl font-bold line-clamp-1">{profile.split_preference}</p>
                 <p className="text-xs text-textMuted uppercase tracking-wider mt-1">Current Split</p>
               </div>
             </div>
@@ -192,8 +264,8 @@ const Dashboard = ({ profile }: { profile: any }) => {
         <div className="space-y-3">
           {todaysPlan.map((ex: any, i: number) => (
             <div key={i} className="flex justify-between items-center p-4 bg-surface border border-border rounded-xl">
-              <span className="font-medium text-lg">{ex.name}</span>
-              <span className="text-sm text-textMuted font-mono bg-background px-3 py-1 rounded-lg border border-border">{ex.sets} × {ex.reps}</span>
+              <span className="font-medium text-lg truncate pr-4">{ex.name}</span>
+              <span className="text-sm text-textMuted font-mono bg-background px-3 py-1 rounded-lg border border-border whitespace-nowrap">{ex.sets} × {ex.reps}</span>
             </div>
           ))}
         </div>
@@ -238,15 +310,11 @@ const Workout = ({ userId }: { userId: string }) => {
 
   const activeExercise = workoutPlan[currentExerciseIndex];
 
-  // Auto-fill suggested weight from Local Storage
   useEffect(() => {
     if (activeExercise?.name) {
       const memory = JSON.parse(localStorage.getItem('fitnessOsWeights') || '{}');
-      if (memory[activeExercise.name]) {
-        setCurrentWeight(memory[activeExercise.name]);
-      } else {
-        setCurrentWeight('');
-      }
+      if (memory[activeExercise.name]) setCurrentWeight(memory[activeExercise.name]);
+      else setCurrentWeight('');
       setCurrentReps('');
     }
   }, [activeExercise?.name]);
@@ -277,7 +345,6 @@ const Workout = ({ userId }: { userId: string }) => {
     const w = Number(currentWeight);
     const r = Number(currentReps);
     if (w > 0 && r > 0) {
-      // Save weight to memory for next time
       const memory = JSON.parse(localStorage.getItem('fitnessOsWeights') || '{}');
       memory[activeExercise.name] = currentWeight;
       localStorage.setItem('fitnessOsWeights', JSON.stringify(memory));
@@ -463,7 +530,14 @@ const HistoryScreen = ({ userId }: { userId: string }) => {
 // --- PROFILE SCREEN ---
 const ProfileScreen = ({ profile, refreshProfile }: { profile: any, refreshProfile: () => void }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isBuilding, setIsBuilding] = useState(false);
   const [newSplit, setNewSplit] = useState(profile.split_preference);
+
+  let customRoutines: any = {};
+  if (Array.isArray(profile.custom_plan)) customRoutines = { 'Custom Workout': profile.custom_plan };
+  else if (profile.custom_plan) customRoutines = profile.custom_plan;
+  
+  const availableSplits = [...Object.keys(WORKOUT_LIBRARIES), ...Object.keys(customRoutines)];
 
   const handleSave = async () => {
     await supabase.from('profiles').update({ 
@@ -474,6 +548,27 @@ const ProfileScreen = ({ profile, refreshProfile }: { profile: any, refreshProfi
     setIsEditing(false);
     refreshProfile(); 
   };
+
+  const handleSaveCustom = async (name: string, plan: any) => {
+    const updatedCustomPlans = { ...customRoutines, [name]: plan };
+    await supabase.from('profiles').update({ 
+      split_preference: name,
+      custom_plan: updatedCustomPlans,
+      current_day_index: 0 
+    }).eq('id', profile.id);
+    
+    setIsBuilding(false);
+    setIsEditing(false);
+    refreshProfile();
+  };
+
+  if (isBuilding) {
+    return (
+      <div className="p-6 pt-12 pb-24">
+        <CustomBuilder onSave={handleSaveCustom} onCancel={() => setIsBuilding(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6 animate-fade-in pb-24 mt-4">
@@ -491,13 +586,16 @@ const ProfileScreen = ({ profile, refreshProfile }: { profile: any, refreshProfi
           </>
         ) : (
           <div className="space-y-3 mt-4 animate-fade-in">
-            {['Push / Pull / Legs', 'Upper / Lower', 'Full Body', 'Bro Split', 'Custom'].map((s) => (
+            {availableSplits.map((s) => (
               <button key={s} onClick={() => setNewSplit(s)} className={`w-full p-4 rounded-xl border text-left font-bold transition-all ${newSplit === s ? 'bg-textMain text-background border-textMain' : 'bg-background border-border text-textMain'}`}>
                 {s}
               </button>
             ))}
-            <div className="flex gap-3 pt-4">
-              <button onClick={() => setIsEditing(false)} className="flex-1 py-4 border border-border rounded-xl font-bold">CANCEL</button>
+            
+            <button onClick={() => setIsBuilding(true)} className="w-full py-4 border border-dashed border-textMuted text-textMuted font-bold rounded-xl hover:text-textMain hover:border-textMain flex items-center justify-center gap-2 mt-4"><Plus className="w-5 h-5" /> CREATE NEW SPLIT</button>
+
+            <div className="flex gap-3 pt-4 border-t border-border mt-4">
+              <button onClick={() => setIsEditing(false)} className="flex-1 py-4 border border-border rounded-xl font-bold hover:bg-surface">CANCEL</button>
               <button onClick={handleSave} className="flex-1 py-4 bg-textMain text-background rounded-xl font-bold">SAVE</button>
             </div>
           </div>

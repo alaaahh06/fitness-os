@@ -65,20 +65,20 @@ const CustomBuilder = ({ onSave, onCancel, initialData }: any) => {
   if (step === 1) {
     return (
       <div className="space-y-6 animate-fade-in w-full pb-24">
-        <h2 className="text-3xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Configure Split</h2>
+        <h2 className="text-3xl font-black tracking-tight uppercase text-white">Configure Split</h2>
         <div className="bg-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)] space-y-4">
           <div>
             <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Split Name</label>
-            <input type="text" value={splitName} onChange={e => setSplitName(e.target.value)} placeholder="e.g. My Arnold Split" className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" />
+            <input type="text" value={splitName} onChange={e => setSplitName(e.target.value)} placeholder="e.g. My Arnold Split" className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" />
           </div>
           <div>
             <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Number of Days</label>
-            <input type="number" min="1" max="14" value={daysCount} onChange={e => setDaysCount(Number(e.target.value))} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" />
+            <input type="number" min="1" max="14" value={daysCount} onChange={e => setDaysCount(Number(e.target.value))} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" />
           </div>
         </div>
         <div className="flex gap-3 mt-4">
           {onCancel && <button onClick={onCancel} className="flex-1 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/5 transition-colors">CANCEL</button>}
-          <button onClick={() => splitName.trim() && daysCount > 0 && setStep(2)} className={`flex-1 py-4 font-black rounded-xl transition-all shadow-lg ${splitName.trim() ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:scale-[1.02]' : 'bg-white/5 text-gray-500 pointer-events-none border border-white/10'}`}>START BUILDING</button>
+          <button onClick={() => splitName.trim() && daysCount > 0 && setStep(2)} className={`flex-1 py-4 font-black rounded-xl transition-all shadow-lg ${splitName.trim() ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02]' : 'bg-white/5 text-gray-500 pointer-events-none border border-white/10'}`}>START BUILDING</button>
         </div>
       </div>
     );
@@ -87,32 +87,32 @@ const CustomBuilder = ({ onSave, onCancel, initialData }: any) => {
   return (
     <div className="space-y-6 animate-fade-in w-full overflow-y-auto pb-32">
       <div className="space-y-1">
-        <h2 className="text-2xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{splitName}</h2>
+        <h2 className="text-2xl font-black tracking-tight uppercase text-white">{splitName}</h2>
         <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Building Day {currentDayIndex + 1} of {daysCount}</p>
       </div>
       
       <div>
         <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Day Title</label>
-        <input type="text" value={dayName} onChange={e => setDayName(e.target.value)} placeholder="e.g. Push Day" className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all shadow-[0_8px_32px_rgba(0,0,0,0.2)]" />
+        <input type="text" value={dayName} onChange={e => setDayName(e.target.value)} placeholder="e.g. Push Day" className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all shadow-[0_8px_32px_rgba(0,0,0,0.2)]" />
       </div>
 
       <div className="space-y-4">
         {exercises.map((ex, idx) => (
           <div key={idx} className="bg-white/5 backdrop-blur-xl p-4 rounded-xl border border-white/10 space-y-3 relative shadow-[0_8px_32px_rgba(0,0,0,0.2)]">
             {exercises.length > 1 && <button onClick={() => setExercises(exercises.filter((_, i) => i !== idx))} className="absolute top-4 right-4 text-gray-500 hover:text-red-400 transition-colors"><X className="w-5 h-5" /></button>}
-            <input type="text" value={ex.name} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].name = e.target.value; setExercises(newPlan); }} placeholder="Exercise" className="w-full bg-black/40 border border-white/10 rounded-lg p-3 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" />
+            <input type="text" value={ex.name} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].name = e.target.value; setExercises(newPlan); }} placeholder="Exercise" className="w-full bg-black/40 border border-white/10 rounded-lg p-3 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" />
             <div className="flex gap-3">
-              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1 block">Sets</label><input type="number" value={ex.sets} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].sets = Number(e.target.value); setExercises(newPlan); }} className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" /></div>
-              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1 block">Reps</label><input type="text" value={ex.reps} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].reps = e.target.value; setExercises(newPlan); }} className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" /></div>
+              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1 block">Sets</label><input type="number" value={ex.sets} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].sets = Number(e.target.value); setExercises(newPlan); }} className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" /></div>
+              <div className="flex-1"><label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1 block">Reps</label><input type="text" value={ex.reps} onChange={(e) => { const newPlan = [...exercises]; newPlan[idx].reps = e.target.value; setExercises(newPlan); }} className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" /></div>
             </div>
           </div>
         ))}
       </div>
-      <button onClick={() => setExercises([...exercises, { name: '', sets: 3, reps: '8-12' }])} className="w-full py-4 border border-dashed border-white/20 text-gray-300 font-bold rounded-xl hover:text-white hover:border-violet-500 flex items-center justify-center gap-2 transition-all"><Plus className="w-5 h-5" /> ADD EXERCISE</button>
+      <button onClick={() => setExercises([...exercises, { name: '', sets: 3, reps: '8-12' }])} className="w-full py-4 border border-dashed border-white/20 text-gray-300 font-bold rounded-xl hover:text-black hover:bg-white hover:border-white flex items-center justify-center gap-2 transition-all"><Plus className="w-5 h-5" /> ADD EXERCISE</button>
       
       <div className="flex gap-3 mt-8">
         {onCancel && <button onClick={onCancel} className="flex-1 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/5 transition-colors">CANCEL</button>}
-        <button onClick={nextDay} className="flex-1 py-4 font-black rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:scale-[1.02] transition-all">{currentDayIndex + 1 === daysCount ? 'SAVE SPLIT' : 'NEXT DAY →'}</button>
+        <button onClick={nextDay} className="flex-1 py-4 font-black rounded-xl bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all">{currentDayIndex + 1 === daysCount ? 'SAVE SPLIT' : 'NEXT DAY →'}</button>
       </div>
     </div>
   );
@@ -141,24 +141,24 @@ const AuthScreen = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black flex flex-col justify-center p-6 space-y-8 animate-fade-in text-white selection:bg-violet-500/30">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black flex flex-col justify-center p-6 space-y-8 animate-fade-in text-white selection:bg-white/30">
       <div className="text-center space-y-2">
-        <h1 className="text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500">FITNESS OS</h1>
-        <p className="text-violet-400 uppercase tracking-widest text-xs font-bold drop-shadow-[0_0_8px_rgba(124,58,237,0.5)]">{isLogin ? 'Welcome Back' : 'Create Account'}</p>
+        <h1 className="text-5xl font-black tracking-tight text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">FITNESS OS</h1>
+        <p className="text-gray-400 uppercase tracking-widest text-xs font-bold">{isLogin ? 'Welcome Back' : 'Create Account'}</p>
       </div>
       
       <div className="space-y-4 bg-white/5 backdrop-blur-2xl p-8 rounded-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-600 to-cyan-400 opacity-50"></div>
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-600 to-white opacity-50"></div>
         {error && <div className="p-3 bg-red-950/40 border border-red-500/50 text-red-200 text-sm rounded-lg backdrop-blur-sm">{error}</div>}
         <div>
           <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Username</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="e.g. IronLifter99" className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" />
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="e.g. IronLifter99" className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" />
         </div>
         <div>
           <label className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-2 block">Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 transition-all" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white transition-all" />
         </div>
-        <button onClick={handleAuth} className="w-full py-4 mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-lg rounded-xl hover:scale-[1.02] shadow-[0_0_20px_rgba(124,58,237,0.4)] transition-all active:scale-[0.98]">
+        <button onClick={handleAuth} className="w-full py-4 mt-4 bg-white text-black font-black text-lg rounded-xl hover:scale-[1.02] shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all active:scale-[0.98]">
           {isLogin ? 'LOG IN' : 'SIGN UP'}
         </button>
       </div>
@@ -188,30 +188,30 @@ const Setup = ({ userId, onComplete }: { userId: string, onComplete: () => void 
 
   if (step === 1) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
-        <h2 className="text-4xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">What should we call you?</h2>
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Arju" className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 text-2xl font-bold text-white focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 shadow-2xl transition-all" />
-        <button onClick={() => name.trim() && setStep(2)} className={`w-full py-5 font-black text-lg rounded-xl transition-all shadow-lg ${name.trim() ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:scale-[1.02]' : 'bg-white/5 text-gray-500 border border-white/10 pointer-events-none'}`}>CONTINUE</button>
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
+        <h2 className="text-4xl font-black tracking-tight uppercase text-white">What should we call you?</h2>
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Arju" className="w-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6 text-2xl font-bold text-white focus:border-white focus:outline-none focus:ring-1 focus:ring-white shadow-2xl transition-all" />
+        <button onClick={() => name.trim() && setStep(2)} className={`w-full py-5 font-black text-lg rounded-xl transition-all shadow-lg ${name.trim() ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02]' : 'bg-white/5 text-gray-500 border border-white/10 pointer-events-none'}`}>CONTINUE</button>
       </div>
     );
   }
 
   if (step === 3) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col p-6 pt-12">
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black text-white flex flex-col p-6 pt-12">
         <CustomBuilder onSave={(customName: string, planData: any) => saveProfile(customName, { [customName]: planData })} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black text-white flex flex-col justify-center p-6 space-y-8 animate-fade-in">
       <div className="space-y-2">
-        <h2 className="text-4xl font-black tracking-tight uppercase text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">Choose your split</h2>
+        <h2 className="text-4xl font-black tracking-tight uppercase text-white">Choose your split</h2>
       </div>
       <div className="space-y-4">
         {['Push / Pull / Legs', 'Upper / Lower', 'Full Body', 'Bro Split', 'Custom'].map((s) => (
-          <button key={s} onClick={() => setSplit(s)} className={`w-full p-6 rounded-2xl border text-left text-xl font-bold transition-all backdrop-blur-md shadow-lg ${split === s ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent shadow-[0_0_20px_rgba(124,58,237,0.4)] scale-[1.02]' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}>{s}</button>
+          <button key={s} onClick={() => setSplit(s)} className={`w-full p-6 rounded-2xl border text-left text-xl font-bold transition-all backdrop-blur-md shadow-lg ${split === s ? 'bg-white text-black border-transparent shadow-[0_0_20px_rgba(255,255,255,0.3)] scale-[1.02]' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}>{s}</button>
         ))}
       </div>
       <button onClick={() => split === 'Custom' ? setStep(3) : saveProfile(split)} className={`w-full py-5 font-black text-lg rounded-xl transition-all shadow-lg mt-4 ${split ? 'bg-white text-black hover:scale-[1.02] shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-white/5 text-gray-500 border border-white/10 pointer-events-none'}`}>
@@ -236,26 +236,26 @@ const Dashboard = ({ profile }: { profile: any }) => {
   return (
     <div className="p-6 space-y-8 animate-fade-in pb-24">
       <header className="mt-4">
-        <h1 className="text-4xl font-bold tracking-tight text-white">Good evening, <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{profile.name}</span></h1>
-        <p className="text-gray-400 mt-1 font-medium">Ready to crush your goals?</p>
+        <h1 className="text-4xl font-bold tracking-tight text-gray-400">Good evening, <span className="text-white drop-shadow-md">{profile.name}</span></h1>
+        <p className="text-gray-500 mt-1 font-medium">Ready to crush your goals?</p>
       </header>
 
       <section>
         <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Today's Training</h2>
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-violet-600/20 blur-3xl rounded-full"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full"></div>
           <h3 className="text-3xl font-black italic tracking-tight mb-6 uppercase text-white drop-shadow-md">{todaysRoutine.dayName}</h3>
           
           <div className="grid grid-cols-2 gap-4 mb-2 relative z-10">
             <div className="bg-black/40 rounded-2xl p-5 border border-white/10 flex flex-col justify-between backdrop-blur-md">
-              <Target className="w-6 h-6 text-cyan-400 mb-3 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+              <Target className="w-6 h-6 text-white mb-3 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
               <div>
                 <p className="text-3xl font-black text-white">{todaysPlan.reduce((acc: number, curr: any) => acc + curr.sets, 0)}</p>
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Sets Today</p>
               </div>
             </div>
             <div className="bg-black/40 rounded-2xl p-5 border border-white/10 flex flex-col justify-between backdrop-blur-md">
-              <Zap className="w-6 h-6 text-violet-400 mb-3 drop-shadow-[0_0_8px_rgba(167,139,250,0.8)]" />
+              <Zap className="w-6 h-6 text-white mb-3 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]" />
               <div>
                 <p className="text-xl font-bold text-white line-clamp-1">{profile.split_preference}</p>
                 <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Current Split</p>
@@ -271,14 +271,14 @@ const Dashboard = ({ profile }: { profile: any }) => {
           {todaysPlan.map((ex: any, i: number) => (
             <div key={i} className="flex justify-between items-center p-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.2)]">
               <span className="font-bold text-lg text-white truncate pr-4">{ex.name}</span>
-              <span className="text-sm text-cyan-400 font-mono bg-cyan-950/30 px-3 py-1.5 rounded-lg border border-cyan-500/20 whitespace-nowrap shadow-[0_0_10px_rgba(34,211,238,0.1)]">{ex.sets} × {ex.reps}</span>
+              <span className="text-sm text-black font-bold font-mono bg-white px-3 py-1.5 rounded-lg whitespace-nowrap shadow-[0_0_10px_rgba(255,255,255,0.2)]">{ex.sets} × {ex.reps}</span>
             </div>
           ))}
         </div>
       </section>
 
-      <button onClick={() => navigate('/workout', { state: { todaysRoutine, splitLength: userSplit.length } })} className="w-full py-5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-xl rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(124,58,237,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all mt-4">
-        <Play className="w-6 h-6 fill-white" /> START WORKOUT
+      <button onClick={() => navigate('/workout', { state: { todaysRoutine, splitLength: userSplit.length } })} className="w-full py-5 bg-white text-black font-black text-xl rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all mt-4">
+        <Play className="w-6 h-6 fill-black" /> START WORKOUT
       </button>
     </div>
   );
@@ -340,7 +340,7 @@ const Workout = ({ userId }: { userId: string }) => {
         </div>
         <div className="flex w-full gap-3">
           {[1, 2, 3, 4, 5].map((level) => (
-            <button key={level} onClick={() => setEnergy(level)} className="flex-1 aspect-square rounded-2xl text-2xl font-black bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-violet-600 hover:border-violet-500 hover:shadow-[0_0_20px_rgba(124,58,237,0.5)] hover:scale-105 active:scale-95 transition-all">{level}</button>
+            <button key={level} onClick={() => setEnergy(level)} className="flex-1 aspect-square rounded-2xl text-2xl font-black bg-white/5 backdrop-blur-md border border-white/10 text-white hover:bg-white hover:text-black hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95 transition-all">{level}</button>
           ))}
         </div>
       </div>
@@ -387,56 +387,56 @@ const Workout = ({ userId }: { userId: string }) => {
       <div className="flex justify-between items-center pb-4 border-b border-white/10 mt-4 relative">
         <div>
           <h1 className="text-3xl font-black tracking-tight italic uppercase text-white drop-shadow-md">{todaysRoutine.dayName}</h1>
-          <p className="text-violet-400 text-sm font-bold flex items-center gap-1 mt-1 drop-shadow-[0_0_8px_rgba(167,139,250,0.8)]"><Zap className="w-4 h-4 fill-violet-400" /> Energy: {energy}/5</p>
+          <p className="text-white text-sm font-bold flex items-center gap-1 mt-1 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"><Zap className="w-4 h-4 fill-white" /> Energy: {energy}/5</p>
         </div>
         <div className="text-right">
-          <div className={`text-4xl font-mono font-black tracking-widest ${isTracking ? 'text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.8)]' : 'text-gray-500'}`}>{formatTime(elapsedTime)}</div>
+          <div className={`text-4xl font-mono font-black tracking-widest ${isTracking ? 'text-white drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]' : 'text-gray-500'}`}>{formatTime(elapsedTime)}</div>
         </div>
       </div>
 
       {!isTracking ? (
         <div className="py-16 flex flex-col items-center space-y-4">
           <div className="p-8 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-            <Timer className="w-20 h-20 text-gray-400" />
+            <Dumbbell className="w-20 h-20 text-white animate-pulse" />
           </div>
           <p className="text-gray-400 font-bold text-lg mt-4">Ready when you are.</p>
-          <button onClick={() => setIsTracking(true)} className="w-full py-5 mt-6 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-xl rounded-2xl shadow-[0_0_25px_rgba(124,58,237,0.5)] hover:scale-[1.02] transition-all">START TRACKING</button>
+          <button onClick={() => setIsTracking(true)} className="w-full py-5 mt-6 bg-white text-black font-black text-xl rounded-2xl shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all">START TRACKING</button>
         </div>
       ) : (
         <>
           <div className="bg-white/5 backdrop-blur-2xl p-8 rounded-3xl border border-white/10 flex flex-col items-center shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden">
-             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-violet-600 opacity-50"></div>
-            <p className="text-cyan-400 text-xs font-bold tracking-widest uppercase mb-2 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">Live Volume</p>
-            <p className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300 drop-shadow-lg">{volume.toLocaleString()} <span className="text-2xl text-gray-500 font-normal">kg</span></p>
+             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-500 to-white opacity-50"></div>
+            <p className="text-white text-xs font-bold tracking-widest uppercase mb-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">Live Volume</p>
+            <p className="text-6xl font-black text-white drop-shadow-lg">{volume.toLocaleString()} <span className="text-2xl text-gray-400 font-normal">kg</span></p>
           </div>
           
           <div className="bg-white/5 backdrop-blur-xl p-6 rounded-3xl border border-white/10 space-y-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
             <div className="flex justify-between items-center">
                <h3 className="font-black text-2xl uppercase tracking-wide text-white">{activeExercise?.name}</h3>
-               <span className="text-sm text-cyan-400 font-mono bg-cyan-950/30 px-3 py-1.5 rounded-lg border border-cyan-500/20 shadow-[0_0_10px_rgba(34,211,238,0.1)]">{activeExercise?.target}</span>
+               <span className="text-sm text-black font-bold font-mono bg-white px-3 py-1.5 rounded-lg shadow-[0_0_10px_rgba(255,255,255,0.2)]">{activeExercise?.target}</span>
             </div>
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 block">Weight (kg)</label>
-                <input type="number" inputMode="decimal" value={currentWeight} onChange={(e) => setCurrentWeight(e.target.value)} className="w-full bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-5 text-4xl font-black text-center text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all shadow-inner" />
+                <input type="number" inputMode="decimal" value={currentWeight} onChange={(e) => setCurrentWeight(e.target.value)} className="w-full bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-5 text-4xl font-black text-center text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all shadow-inner" />
               </div>
               <div className="flex-1">
                 <label className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 block">Reps</label>
-                <input type="number" inputMode="numeric" value={currentReps} onChange={(e) => setCurrentReps(e.target.value)} className="w-full bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-5 text-4xl font-black text-center text-white focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all shadow-inner" />
+                <input type="number" inputMode="numeric" value={currentReps} onChange={(e) => setCurrentReps(e.target.value)} className="w-full bg-black/50 backdrop-blur-md border border-white/10 rounded-2xl p-5 text-4xl font-black text-center text-white focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all shadow-inner" />
               </div>
             </div>
-            <button onClick={handleCompleteSet} className="w-full py-5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-black text-lg rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all mt-2">
+            <button onClick={handleCompleteSet} className="w-full py-5 bg-white text-black font-black text-lg rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all mt-2">
               <CheckCircle className="w-6 h-6" /> COMPLETE SET
             </button>
             {currentExerciseIndex < workoutPlan.length - 1 && (
-              <button onClick={() => setCurrentExerciseIndex(prev => prev + 1)} className="w-full py-4 bg-transparent border border-white/10 text-gray-300 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-white/5 hover:text-white transition-all mt-2">NEXT EXERCISE →</button>
+              <button onClick={() => setCurrentExerciseIndex(prev => prev + 1)} className="w-full py-4 bg-transparent border border-white/10 text-gray-300 font-bold rounded-2xl flex items-center justify-center gap-2 hover:bg-white/10 hover:text-white transition-all mt-2">NEXT EXERCISE →</button>
             )}
           </div>
         </>
       )}
 
       <div className="fixed bottom-20 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none z-40">
-        <button onClick={handleFinish} className="w-full py-5 bg-white/10 backdrop-blur-xl border border-white/20 text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-white/20 transition-all pointer-events-auto shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+        <button onClick={handleFinish} className="w-full py-5 bg-black/50 backdrop-blur-xl border border-white/20 text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-black/70 transition-all pointer-events-auto shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
           <Square className="w-5 h-5 fill-white" /> FINISH WORKOUT
         </button>
       </div>
@@ -454,23 +454,23 @@ const WorkoutSummary = ({ refreshProfile }: { refreshProfile: () => void }) => {
   return (
     <div className="p-6 space-y-8 animate-fade-in pb-24">
       <div className="text-center space-y-2 mt-12">
-        <h1 className="text-5xl font-black tracking-tight uppercase italic text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 drop-shadow-lg">Workout Complete</h1>
+        <h1 className="text-5xl font-black tracking-tight uppercase italic text-white drop-shadow-lg">Workout Complete</h1>
         <p className="text-gray-400 font-medium">Session securely saved to database.</p>
       </div>
       <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] space-y-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-400/10 blur-3xl rounded-full"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-violet-600/10 blur-3xl rounded-full"></div>
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full"></div>
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 blur-3xl rounded-full"></div>
         
         <div className="grid grid-cols-2 gap-6 relative z-10">
           <div><p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Volume</p><p className="text-3xl font-black text-white">{stats.finalVolume.toLocaleString()} <span className="text-sm font-normal text-gray-500">kg</span></p></div>
           <div><p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Duration</p><p className="text-3xl font-black text-white">{minutes} <span className="text-sm font-normal text-gray-500">min</span></p></div>
           <div><p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Sets</p><p className="text-3xl font-black text-white">{stats.finalSets}</p></div>
-          <div><p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Energy Logged</p><p className="text-3xl font-black text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.8)]">{stats.energyLevel} / 5</p></div>
+          <div><p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Energy Logged</p><p className="text-3xl font-black text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{stats.energyLevel} / 5</p></div>
         </div>
       </div>
       <button 
         onClick={() => { refreshProfile(); navigate('/'); }}
-        className="w-full py-5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-xl rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(124,58,237,0.4)] hover:scale-[1.02] transition-all mt-8"
+        className="w-full py-5 bg-white text-black font-black text-xl rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] transition-all mt-8"
       >
         <CheckCircle className="w-6 h-6" /> DONE
       </button>
@@ -511,7 +511,7 @@ const HistoryScreen = ({ userId }: { userId: string }) => {
       <div className="flex justify-between items-end">
         <h1 className="text-4xl font-black tracking-tight uppercase italic text-white drop-shadow-md">History</h1>
         {logs.length > 0 && (
-          <button onClick={handleClear} className="text-red-400 font-bold uppercase text-[10px] tracking-widest mb-2 hover:text-red-300 transition-colors drop-shadow-[0_0_8px_rgba(248,113,113,0.5)]">Clear All</button>
+          <button onClick={handleClear} className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mb-2 hover:text-white transition-colors">Clear All</button>
         )}
       </div>
 
@@ -525,7 +525,7 @@ const HistoryScreen = ({ userId }: { userId: string }) => {
             <div key={log.id} className="bg-white/5 backdrop-blur-xl p-5 rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:bg-white/10 transition-colors">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-black text-xl uppercase text-white">{log.day_name}</h3>
-                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest bg-cyan-950/30 px-2 py-1 rounded-md border border-cyan-500/20">{new Date(log.created_at).toLocaleDateString()}</span>
+                <span className="text-[10px] text-black font-bold uppercase tracking-widest bg-white px-2 py-1 rounded-md">{new Date(log.created_at).toLocaleDateString()}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Volume</span> <span className="font-bold text-white">{log.total_volume.toLocaleString()}kg</span></div>
@@ -594,13 +594,13 @@ const ProfileScreen = ({ profile, refreshProfile }: any) => {
         
         {!isEditing ? (
           <>
-            <p className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">{profile.split_preference}</p>
+            <p className="text-3xl font-black text-white">{profile.split_preference}</p>
             
             <div className="flex flex-col gap-3 mt-6 pt-2">
               <button onClick={() => { setEditData({ name: profile.split_preference, days: userCurrentSplitData }); setIsBuilding(true); }} className="w-full py-4 border border-white/20 bg-black/20 backdrop-blur-md text-white font-bold rounded-2xl hover:bg-white/10 flex items-center justify-center gap-2 transition-all shadow-inner">
                 <Edit3 className="w-5 h-5" /> EDIT CURRENT SPLIT
               </button>
-              <button onClick={() => setIsEditing(true)} className="w-full py-4 bg-white/10 text-white font-bold rounded-2xl hover:bg-white/20 transition-all border border-white/5">
+              <button onClick={() => setIsEditing(true)} className="w-full py-4 bg-white/10 text-white font-bold rounded-2xl hover:bg-white/20 transition-all border border-white/5 backdrop-blur-md">
                 SWAP ROUTINE
               </button>
             </div>
@@ -608,22 +608,22 @@ const ProfileScreen = ({ profile, refreshProfile }: any) => {
         ) : (
           <div className="space-y-3 mt-4 animate-fade-in">
             {availableSplits.map((s) => (
-              <button key={s} onClick={() => setNewSplit(s)} className={`w-full p-5 rounded-2xl border text-left font-bold transition-all shadow-md ${newSplit === s ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white border-transparent scale-[1.02] shadow-[0_0_20px_rgba(124,58,237,0.4)]' : 'bg-black/40 border-white/10 text-white hover:bg-white/10'}`}>
+              <button key={s} onClick={() => setNewSplit(s)} className={`w-full p-5 rounded-2xl border text-left font-bold transition-all shadow-md ${newSplit === s ? 'bg-white text-black border-transparent scale-[1.02] shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-black/40 border-white/10 text-white hover:bg-white/10'}`}>
                 {s}
               </button>
             ))}
             
-            <button onClick={() => { setEditData(null); setIsBuilding(true); }} className="w-full py-5 border border-dashed border-white/20 text-gray-300 font-bold rounded-2xl hover:text-white hover:border-violet-500 flex items-center justify-center gap-2 mt-4 transition-all"><Plus className="w-5 h-5" /> CREATE NEW SPLIT</button>
+            <button onClick={() => { setEditData(null); setIsBuilding(true); }} className="w-full py-5 border border-dashed border-white/20 text-gray-300 font-bold rounded-2xl hover:text-black hover:bg-white hover:border-white flex items-center justify-center gap-2 mt-4 transition-all"><Plus className="w-5 h-5" /> CREATE NEW SPLIT</button>
 
             <div className="flex gap-3 pt-6 border-t border-white/10 mt-6">
               <button onClick={() => setIsEditing(false)} className="flex-1 py-4 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 transition-colors">CANCEL</button>
-              <button onClick={handleSave} className="flex-1 py-4 bg-white text-black rounded-xl font-black hover:scale-[1.02] shadow-[0_0_15px_rgba(255,255,255,0.3)] transition-all">SAVE</button>
+              <button onClick={handleSave} className="flex-1 py-4 bg-white text-black rounded-xl font-black hover:scale-[1.02] shadow-[0_0_15px_rgba(255,255,255,0.2)] transition-all">SAVE</button>
             </div>
           </div>
         )}
       </div>
 
-      <button onClick={() => supabase.auth.signOut()} className="w-full py-4 bg-red-950/30 border border-red-500/30 text-red-400 font-bold rounded-2xl mt-8 hover:bg-red-900/40 hover:text-red-300 transition-colors backdrop-blur-md">
+      <button onClick={() => supabase.auth.signOut()} className="w-full py-4 bg-white/5 border border-white/10 text-gray-400 font-bold rounded-2xl mt-8 hover:bg-white/10 hover:text-white transition-colors backdrop-blur-md">
         SIGN OUT
       </button>
     </div>
@@ -646,7 +646,7 @@ const BottomNav = () => {
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           return (
-            <Link key={path} to={path} className={`flex flex-col items-center justify-center w-full h-full transition-all duration-300 ${isActive ? 'text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'text-gray-500 hover:text-gray-300'}`}>
+            <Link key={path} to={path} className={`flex flex-col items-center justify-center w-full h-full transition-all duration-300 ${isActive ? 'text-white scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'text-gray-500 hover:text-gray-300'}`}>
               <Icon className={`w-6 h-6 mb-1.5 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
               <span className="text-[10px] font-bold tracking-widest uppercase">{label}</span>
             </Link>
@@ -695,11 +695,11 @@ export default function App() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black flex flex-col items-center justify-center space-y-5 text-white">
-      <div className="p-4 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-         <Timer className="w-10 h-10 text-cyan-400 animate-spin drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black flex flex-col items-center justify-center space-y-5 text-white">
+      <div className="p-5 bg-white/5 rounded-full backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+         <Dumbbell className="w-10 h-10 text-white animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
       </div>
-      <div className="text-cyan-400 font-bold tracking-widest text-[10px] uppercase drop-shadow-md">Loading OS...</div>
+      <div className="text-white font-bold tracking-widest text-[10px] uppercase drop-shadow-md">Loading OS...</div>
     </div>
   );
 
@@ -711,7 +711,7 @@ export default function App() {
 
   return (
     <HashRouter>
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black text-white pb-20 selection:bg-violet-500/30">
+      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-[#050505] to-black text-white pb-20 selection:bg-white/30">
         <Routes>
           <Route path="/" element={<Dashboard profile={profile} />} />
           <Route path="/workout" element={<Workout userId={session.user.id} />} />

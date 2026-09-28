@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
-import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Edit3, Loader2 } from 'lucide-react';
+import { Home, Dumbbell, History, User, Play, Zap, Target, Square, CheckCircle, Plus, X, Edit3, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from './lib/supabase';
 
 // --- WORKOUT LIBRARIES ---
@@ -301,6 +301,41 @@ const Workout = ({ userId }: { userId: string }) => {
   const [currentWeight, setCurrentWeight] = useState('');
   const [currentReps, setCurrentReps] = useState('');
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
+  const [sessionDetails, setSessionDetails] = useState<any[]>([]); // New state for holding set details
+
+  // WAKE LOCK API: Keep screen awake while tracking
+  useEffect(() => {
+    let wakeLock: any = null;
+
+    const requestWakeLock = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await (navigator as any).wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.error('Wake Lock error:', err);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (wakeLock !== null && document.visibilityState === 'visible' && isTracking) {
+        requestWakeLock();
+      }
+    };
+
+    if (isTracking) {
+      requestWakeLock();
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
+
+    return () => {
+      if (wakeLock !== null) {
+        wakeLock.release();
+        wakeLock = null;
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isTracking]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval>;
@@ -357,6 +392,19 @@ const Workout = ({ userId }: { userId: string }) => {
 
       setVolume(prev => prev + (w * r));
       setSetsCompleted(prev => prev + 1);
+
+      // Save detailed log of this specific set
+      setSessionDetails(prev => {
+        const existing = [...prev];
+        const exIndex = existing.findIndex(ex => ex.name === activeExercise.name);
+        if (exIndex >= 0) {
+          existing[exIndex].sets.push({ weight: w, reps: r });
+        } else {
+          existing.push({ name: activeExercise.name, sets: [{ weight: w, reps: r }] });
+        }
+        return existing;
+      });
+
       setCurrentReps('');
     }
   };
@@ -364,13 +412,15 @@ const Workout = ({ userId }: { userId: string }) => {
   const handleFinish = async () => {
     setIsTracking(false);
     
+    // Save to database, including the new details JSON payload
     await supabase.from('workout_logs').insert({
       user_id: userId,
       day_name: todaysRoutine.dayName,
       energy_level: energy,
       total_volume: volume,
       duration_seconds: elapsedTime,
-      sets_completed: setsCompleted
+      sets_completed: setsCompleted,
+      details: sessionDetails 
     });
 
     const { data: profile } = await supabase.from('profiles').select('current_day_index').eq('id', userId).single();
@@ -482,6 +532,7 @@ const WorkoutSummary = ({ refreshProfile }: { refreshProfile: () => void }) => {
 const HistoryScreen = ({ userId }: { userId: string }) => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchHistory();
@@ -521,19 +572,67 @@ const HistoryScreen = ({ userId }: { userId: string }) => {
         </div>
       ) : (
         <div className="space-y-4">
-          {logs.map((log) => (
-            <div key={log.id} className="bg-white/5 backdrop-blur-xl p-5 rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:bg-white/10 transition-colors">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-black text-xl uppercase text-white">{log.day_name}</h3>
-                <span className="text-[10px] text-black font-bold uppercase tracking-widest bg-white px-2 py-1 rounded-md">{new Date(log.created_at).toLocaleDateString()}</span>
+          {logs.map((log) => {
+            const isExpanded = expandedId === log.id;
+
+            return (
+              <div 
+                key={log.id} 
+                onClick={() => setExpandedId(isExpanded ? null : log.id)}
+                className="bg-white/5 backdrop-blur-xl p-5 rounded-2xl border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.2)] hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-black text-xl uppercase text-white flex items-center gap-2">
+                    {log.day_name}
+                  </h3>
+                  <span className="text-[10px] text-black font-bold uppercase tracking-widest bg-white px-2 py-1 rounded-md">{new Date(log.created_at).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Volume</span> <span className="font-bold text-white">{log.total_volume.toLocaleString()}kg</span></div>
+                  <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Sets</span> <span className="font-bold text-white">{log.sets_completed}</span></div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Time</span> 
+                    <div className="flex items-center gap-2 font-bold text-white">
+                      {Math.ceil(log.duration_seconds/60)}m 
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                    </div>
+                  </div>
+                </div>
+
+                {/* EXPANDED DETAILS */}
+                {isExpanded && (
+                  <div className="mt-5 pt-5 border-t border-white/10 animate-fade-in space-y-5">
+                    
+                    {/* Energy Highlight */}
+                    <div className="flex items-center justify-between bg-black/40 p-4 rounded-xl border border-white/5">
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Energy Logged</span>
+                      <span className="flex items-center gap-1.5 text-white font-black drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"><Zap className="w-4 h-4 fill-white" /> {log.energy_level} / 5</span>
+                    </div>
+
+                    {/* Exercise Details */}
+                    {log.details && log.details.length > 0 ? (
+                      <div className="space-y-4">
+                        {log.details.map((ex: any, idx: number) => (
+                          <div key={idx} className="space-y-2">
+                            <p className="text-sm font-bold text-white tracking-wide">{ex.name}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {ex.sets.map((set: any, sIdx: number) => (
+                                <span key={sIdx} className="text-xs text-black font-bold font-mono bg-gray-300 px-2 py-1 rounded-md shadow-[0_0_8px_rgba(255,255,255,0.1)]">
+                                  {set.weight}kg × {set.reps}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500 italic text-center py-2">No detailed sets recorded for this session.</p>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className="flex justify-between text-sm">
-                <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Volume</span> <span className="font-bold text-white">{log.total_volume.toLocaleString()}kg</span></div>
-                <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Sets</span> <span className="font-bold text-white">{log.sets_completed}</span></div>
-                <div><span className="text-gray-500 uppercase text-[10px] tracking-widest block mb-1">Time</span> <span className="font-bold text-white">{Math.ceil(log.duration_seconds/60)}m</span></div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
